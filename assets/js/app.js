@@ -4,7 +4,6 @@ let lat = 46.68664732483417;
 let lon = 32.54464706119928;
 
 let customMap = null;
-let popup = L.popup();
 let markersArray = []
 
 function initMap() {

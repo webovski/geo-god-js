@@ -10,11 +10,13 @@
 </head>
 <script src="assets/js/app.js"></script>
 <div id="imap">
-    <button class="button-under button-clear" onclick="clearPoints()">
-        Очистить точки
-    </button>
-    <button class="button-under button-start" onclick="startParsing()">
-        Запустить парсинг
-    </button>
+    <div class="buttons-container">
+        <a class="action-buttons custom-button clear-points-btn no-select" onclick="clearPoints()">
+            Очистить точки
+        </a>
+        <a class="action-buttons custom-button start-parsing-btn no-select" onclick="startParsing()">
+            Запустить парсинг
+        </a>
+    </div>
     <div id="map"><!--map rendering--></div>
 </div>
