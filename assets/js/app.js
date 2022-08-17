@@ -17,9 +17,13 @@ function initMap() {
 }
 
 function setPoint(e) {
-    popup.setLatLng(e.latlng)
-    let marker = L.marker(e.latlng).addTo(customMap)
-    markersArray.push(marker)
+    let circleMarker = L.circle([e.latlng.lat, e.latlng.lng], {
+        color: '#27a6e6',
+        fillColor: 'rgba(39,166,230,0.54)',
+        fillOpacity: 0.5,
+        radius: 500
+    }).addTo(customMap);
+    markersArray.push(circleMarker)
 }
 
 function clearPoints() {
