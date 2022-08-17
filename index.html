@@ -1,5 +1,6 @@
 <head>
     <title>Test Map</title>
+    <meta charset="UTF-8">
     <meta content='width=device-width, initial-scale=1' name='viewport'/>
     <link href="favicon.ico" rel="icon" type="image/x-icon">
     <link href="assets/css/leaflet.css" rel="stylesheet"/>
@@ -9,7 +10,11 @@
 </head>
 <script src="assets/js/app.js"></script>
 <div id="imap">
-    <div id="map">
-        <!--map rendering-->
-    </div>
+    <button class="button-under button-clear" onclick="clearPoints()">
+        Очистить точки
+    </button>
+    <button class="button-under button-start" onclick="startParsing()">
+        Запустить парсинг
+    </button>
+    <div id="map"><!--map rendering--></div>
 </div>

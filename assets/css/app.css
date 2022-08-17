@@ -2,3 +2,23 @@
     height: 100%;
     width: 100%;
 }
+
+.button-under {
+    position: absolute;
+    z-index: 999;
+    right: 5%;
+    text-transform: uppercase;
+    font-size: 20px;
+}
+
+.button-clear {
+    top: 10%;
+}
+
+.button-start {
+    top: 15%;
+}
+
+.button-under:hover {
+    cursor: pointer;
+}
