@@ -5,19 +5,69 @@
     <link href="favicon.ico" rel="icon" type="image/x-icon">
     <link href="assets/css/leaflet.css" rel="stylesheet"/>
     <link href="assets/css/app.css" rel="stylesheet"/>
+    <link href="assets/css/spinner.css" rel="stylesheet"/>
     <script src="assets/js/leaflet.js"></script>
     <script src="assets/js/jquery3.3.1.js" type='text/javascript'></script>
     <script src="assets/js/sweetalert2.js" type='text/javascript'></script>
 </head>
 <script src="assets/js/app.js"></script>
 <div id="imap">
-    <div class="buttons-container">
+    <div class="app-container">
         <a class="action-buttons custom-button clear-points-btn no-select" onclick="clearPoints()">
             Очистить точки
         </a>
         <a class="action-buttons custom-button start-parsing-btn no-select" onclick="startParsing()">
             Запустить парсинг
         </a>
+        <div class="user-info-container">
+            <div class="balance">
+                <span id="user-balance" style="display: none">Ваш баланс: <b>$0.00000</b></span>
+                <div id="balance-loader">
+                    <div class="lds-dual-ring"></div>
+                </div>
+            </div>
+
+        </div>
     </div>
+
     <div id="map"><!--map rendering--></div>
 </div>
+<script>
+
+    initUser()
+
+    function initUser() {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const accessKey = urlParams.get('key')
+
+        let requestBody = {
+            route: 'init',
+            access_key: accessKey
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "https://script.google.com/macros/s/AKfycbzyc-Xff4WdfX6wpkXAfiPNjRT06x_HMdfuKza8Q1-qysGNw3iFazf5723QRqHccYzG/exec",
+            dataType: "json",
+            contentType: 'application/json',
+            data:  requestBody,
+            success: function (response, status) {
+                if (response) {
+                    alert("Data: " + JSON.stringify(response) + "\nStatus: " + status);
+                } else {
+                    alert("Error");
+                }
+            },
+        });
+    }
+
+    function dataLoaded() {
+        let loadinSpinner = document.getElementById('balance-loader')
+        loadinSpinner.style.display = 'none'
+        let userBalance = document.getElementById('user-balance')
+        userBalance.style.display = 'block'
+    }
+
+    setTimeout(dataLoaded, 5000);
+</script>

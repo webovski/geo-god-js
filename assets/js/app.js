@@ -46,11 +46,11 @@ function startParsing() {
         }).then((result) => {
             if (result.isConfirmed) {
                 Swal.fire('Сбор запущен!', '', 'success')
+                clearPoints(false)
             } else if (result.isDenied) {
                 Swal.fire('Действие отменено!', '', 'info')
             }
         })
-        clearPoints(false)
     } else {
         Swal.fire('Вы не выбрали точки!', '', 'info')
     }
