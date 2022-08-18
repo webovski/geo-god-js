@@ -21,7 +21,7 @@
         </a>
         <div class="user-info-container">
             <div class="balance">
-                <span id="user-balance" style="display: none">Ваш баланс: <b>$0.00000</b></span>
+                <span id="user-balance" style="display: none">Ваш баланс: <b id="balance-in-dollars">$0.00000</b></span>
                 <div id="balance-loader">
                     <div class="lds-dual-ring"></div>
                 </div>
@@ -49,25 +49,31 @@
         $.ajax({
             type: "POST",
             url: "https://script.google.com/macros/s/AKfycbzyc-Xff4WdfX6wpkXAfiPNjRT06x_HMdfuKza8Q1-qysGNw3iFazf5723QRqHccYzG/exec",
-            dataType: "json",
-            contentType: 'application/json',
-            data:  requestBody,
-            success: function (response, status) {
+            traditional: true,
+            redirect: "follow",
+            headers: {
+                "Content-Type": "text/plain;charset=utf-8",
+            },
+            data: JSON.stringify(requestBody),
+            success: function (response) {
                 if (response) {
-                    alert("Data: " + JSON.stringify(response) + "\nStatus: " + status);
+                    dataLoaded(response.balance)
                 } else {
-                    alert("Error");
+                    dataLoaded('$0.00000')
                 }
             },
+            error: function () {
+                dataLoaded('$0.00000')
+            }
         });
     }
 
-    function dataLoaded() {
+    function dataLoaded(balanceFromServer) {
         let loadinSpinner = document.getElementById('balance-loader')
         loadinSpinner.style.display = 'none'
         let userBalance = document.getElementById('user-balance')
+        document.getElementById('balance-in-dollars').innerText = balanceFromServer
         userBalance.style.display = 'block'
     }
 
-    setTimeout(dataLoaded, 5000);
 </script>
