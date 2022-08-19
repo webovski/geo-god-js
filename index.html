@@ -30,16 +30,8 @@
         <div class="results-container user-info-container no-select">
             <div class="dropdown">
                 <span>История парсинга</span>
-                <div class="dropdown-content">
-                    <a class="history-item" href="#">$0.35100 - 234 - 17:29 </a>
-                    <a class="history-item" href="#">$0.35100 - 234 - 17:29 </a>
-                    <a class="history-item" href="#">$0.35100 - 234 - 17:29 </a>
-                    <a class="history-item" href="#">$0.35100 - 234 - 17:29 </a>
-                    <a class="history-item" href="#">$0.35100 - 234 - 17:29 </a>
-                    <a class="history-item" href="#">$0.35100 - 234 - 17:29 </a>
-                    <a class="history-item" href="#">$0.35100 - 234 - 17:29 </a>
-                    <a class="history-item" href="#">$0.35100 - 234 - 17:29 </a>
-                    <a class="history-item" href="#">$0.35100 - 234 - 17:29 </a>
+                <div id="user-history-container" class="dropdown-content">
+                    <p id="no-user-history">Нет данных</p>
                 </div>
             </div>
         </div>
@@ -72,6 +64,7 @@
             data: JSON.stringify(requestBody),
             success: function (response) {
                 if (response) {
+                    renderUserHistory(response.history)
                     dataLoaded(response.balance)
                 } else {
                     dataLoaded('$0.00000')
@@ -81,6 +74,17 @@
                 dataLoaded('$0.00000')
             }
         });
+    }
+
+    function renderUserHistory(userHistoryArray) {
+        if (userHistoryArray.length > 0) {
+            document.getElementById('no-user-history').style.display = 'none'
+            let userHistoryContainer = document.getElementById('user-history-container')
+            for (let i = 0, len = userHistoryArray.length; i < len; i++) {
+                let historyItem = userHistoryArray[i]
+                userHistoryContainer.innerHTML += `<a class="history-item" target="_blank" href="${historyItem.result_url}">${historyItem.total_cost} - ${historyItem.total_users} - ${historyItem.created_at} </a>`
+            }
+        }
     }
 
     function dataLoaded(balanceFromServer) {
