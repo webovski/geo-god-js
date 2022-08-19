@@ -19,14 +19,21 @@
         <a class="action-buttons custom-button start-parsing-btn no-select" onclick="startParsing()">
             Запустить парсинг
         </a>
-        <div class="user-info-container">
+        <div class="user-info-container no-select">
             <div class="balance">
                 <span id="user-balance" style="display: none">Ваш баланс: <b id="balance-in-dollars">$0.00000</b></span>
                 <div id="balance-loader">
                     <div class="lds-dual-ring"></div>
                 </div>
             </div>
-
+        </div>
+        <div class="results-container user-info-container no-select">
+            <div class="dropdown">
+                <span>История парсинга</span>
+                <div class="dropdown-content">
+                    <a href="https://example.com" target="_blank">Test</a>
+                </div>
+            </div>
         </div>
     </div>
 
