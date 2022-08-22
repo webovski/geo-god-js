@@ -9,7 +9,9 @@ let markersArray = []
 function initMap() {
     customMap = L.map('map').setView([lat, lon], 13);
     L.tileLayer(theme, {
-        minZoom: 1, maxZoom: 20
+        attribution: '<a target="_blank" href="https://t.me/+kvN-HqcjRfVhY2U8">GeoGod</a> | <a target="_blank" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        minZoom: 1,
+        maxZoom: 20
     }).addTo(customMap);
     customMap.on('click', setPoint);
 
@@ -45,8 +47,14 @@ function startParsing() {
             denyButtonText: `Отмена`,
         }).then((result) => {
             if (result.isConfirmed) {
-                Swal.fire('Сбор запущен!', '', 'success')
-                clearPoints(false)
+                let userFrontEndBalance = parseFloat(document.getElementById('balance-in-dollars').innerText.substring(1))
+                if (userFrontEndBalance > 0) {
+                    Swal.fire('Сбор запущен!', '', 'success')
+                    freezeParsingButton()
+                    clearPoints(false)
+                } else {
+                    Swal.fire('Парсинг невозможен: пополните баланс!', '', 'error')
+                }
             } else if (result.isDenied) {
                 Swal.fire('Действие отменено!', '', 'info')
             }

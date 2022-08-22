@@ -16,7 +16,8 @@
         <a class="action-buttons custom-button clear-points-btn no-select" onclick="clearPoints()">
             Очистить точки
         </a>
-        <a class="action-buttons custom-button start-parsing-btn no-select" onclick="startParsing()">
+        <a class="action-buttons custom-button start-parsing-btn no-select" id="start-parsing-button"
+           onclick="startParsing()">
             Запустить парсинг
         </a>
         <div class="user-info-container no-select">
@@ -27,20 +28,29 @@
                 </div>
             </div>
         </div>
-        <div class="results-container user-info-container no-select">
-            <div class="dropdown">
-                <span>История парсинга</span>
-                <div id="user-history-container" class="dropdown-content">
-                    <p id="no-user-history">Нет данных</p>
+        <div class="user-info-container no-select" id="history-loader-container">
+            <div class="history">
+                <div id="history-loader">
+                    <div class="lds-dual-ring"></div>
                 </div>
             </div>
+        </div>
+        <div class="results-container user-info-container no-select" id="user-history-exists"
+             onclick="showUserHistory()">
+            <div class="dropdown">
+                <span>История парсинга</span>
+            </div>
+        </div>
+        <div class="user-info-container no-select" id="no-user-history">
+            <span>Нет истории</span>
         </div>
     </div>
 
     <div id="map"><!--map rendering--></div>
 </div>
 <script>
-
+    $('body').append('<div id="user-history-container" style="display: none;"></div>');
+    let userHistoryContainer = document.getElementById('user-history-container')
     initUser()
 
     function initUser() {
@@ -66,24 +76,47 @@
                 if (response) {
                     renderUserHistory(response.history)
                     dataLoaded(response.balance)
+                    if (parseInt(response.state) === 0) {
+                        removeFreezeFromParsingButton()
+                    } else if (parseInt(response.state) === 1) {
+                        document.getElementById('start-parsing-button').innerText = 'Ожидайте результат'
+                    }
                 } else {
                     dataLoaded('$0.00000')
+                    removeFreezeFromParsingButton()
                 }
             },
             error: function () {
                 dataLoaded('$0.00000')
+                removeFreezeFromParsingButton()
             }
         });
     }
 
-    function renderUserHistory(userHistoryArray) {
-        if (userHistoryArray.length > 0) {
+    function freezeParsingButton() {
+        document.getElementById('start-parsing-button').style.opacity = '0.5'
+        document.getElementById('start-parsing-button').style.pointerEvents = 'none'
+        document.getElementById('start-parsing-button').innerText = 'Ожидайте результат'
+    }
+
+    function removeFreezeFromParsingButton() {
+        document.getElementById('start-parsing-button').style.opacity = '1'
+        document.getElementById('start-parsing-button').style.pointerEvents = 'all'
+    }
+
+    function renderUserHistory(userHistoryArrayFromRequest) {
+        if (userHistoryArrayFromRequest.length > 0) {
+            let userHistoryArray = userHistoryArrayFromRequest.reverse()
             document.getElementById('no-user-history').style.display = 'none'
-            let userHistoryContainer = document.getElementById('user-history-container')
             for (let i = 0, len = userHistoryArray.length; i < len; i++) {
                 let historyItem = userHistoryArray[i]
                 userHistoryContainer.innerHTML += `<a class="history-item" target="_blank" href="${historyItem.result_url}">${historyItem.total_cost} - ${historyItem.total_users} - ${historyItem.created_at} </a>`
             }
+            document.getElementById('history-loader-container').style.display = 'none'
+            document.getElementById('user-history-exists').style.display = 'block'
+        } else {
+            document.getElementById('history-loader-container').style.display = 'none'
+            document.getElementById('no-user-history').style.display = 'block'
         }
     }
 
@@ -93,6 +126,11 @@
         let userBalance = document.getElementById('user-balance')
         document.getElementById('balance-in-dollars').innerText = balanceFromServer
         userBalance.style.display = 'block'
+    }
+
+    function showUserHistory() {
+        userHistoryContainer.style.display = 'block'
+        Swal.fire(userHistoryContainer, '', 'info')
     }
 
 </script>
