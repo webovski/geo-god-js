@@ -36,32 +36,66 @@ function clearPoints(showAlert = true) {
 }
 
 function startParsing() {
-
     let markersCount = markersArray.length
+    let userFrontEndBalance = parseFloat(document.getElementById('balance-in-dollars').innerText.substring(1))
 
     if (markersCount > 0) {
-        Swal.fire({
-            title: `Выбрано ${markersCount} точек. Вы действительно хотите запустить сбор? Данная операция необратима!`,
-            showDenyButton: true,
-            confirmButtonText: 'Запустить',
-            denyButtonText: `Отмена`,
-        }).then((result) => {
-            if (result.isConfirmed) {
-                let userFrontEndBalance = parseFloat(document.getElementById('balance-in-dollars').innerText.substring(1))
-                if (userFrontEndBalance > 0) {
+        if (userFrontEndBalance > 0) {
+            Swal.fire({
+                title: `Выбрано ${markersCount} точек. Вы действительно хотите запустить сбор? Данная операция необратима!`,
+                confirmButtonText: 'Запустить',
+                showLoaderOnConfirm: true,
+                preConfirm: () => {
+                    return callParsingApi(markersArray)
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (!result.isConfirmed) {
+                    Swal.fire('Действие отменено!', '', 'error')
+                } else {
                     Swal.fire('Сбор запущен!', '', 'success')
                     freezeParsingButton()
                     clearPoints(false)
-                } else {
-                    Swal.fire('Парсинг невозможен: пополните баланс!', '', 'error')
                 }
-            } else if (result.isDenied) {
-                Swal.fire('Действие отменено!', '', 'info')
-            }
-        })
+            })
+        } else {
+            Swal.fire('Пополните баланс!', '', 'error')
+        }
     } else {
         Swal.fire('Вы не выбрали точки!', '', 'info')
     }
+}
+
+function callParsingApi(markersArray) {
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const accessKey = urlParams.get('key')
+    let markersForRequest = []
+
+    for (let markerItemForRequest of markersArray) {
+        let latForRequest = markerItemForRequest._latlng.lat
+        let lonForRequest = markerItemForRequest._latlng.lng
+        markersForRequest.push([latForRequest, lonForRequest])
+    }
+
+    let requestBody = {
+        route: 'parse', access_key: accessKey, markers: markersForRequest
+    };
+
+    let apiResponse = $.ajax({
+        type: "POST",
+        url: "https://script.google.com/macros/s/AKfycbzyc-Xff4WdfX6wpkXAfiPNjRT06x_HMdfuKza8Q1-qysGNw3iFazf5723QRqHccYzG/exec",
+        traditional: true,
+        redirect: "follow",
+        headers: {
+            "Content-Type": "text/plain;charset=utf-8",
+        },
+        async: false,
+        data: JSON.stringify(requestBody)
+    });
+
+    return apiResponse.responseJSON.state
 }
 
 $(document).ready(function () {
