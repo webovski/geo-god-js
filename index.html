@@ -108,6 +108,9 @@
     }
 
     function renderUserHistory(userHistoryArrayFromRequest) {
+        if (userHistoryArrayFromRequest === undefined) {
+            userHistoryArrayFromRequest = []
+        }
         if (userHistoryArrayFromRequest.length > 0) {
             let userHistoryArray = userHistoryArrayFromRequest.reverse()
             document.getElementById('no-user-history').style.display = 'none'
